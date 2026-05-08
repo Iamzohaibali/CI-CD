@@ -15,6 +15,14 @@ app.get("/health", (req, res) => {
   });
 });
 
+app.get("/status", (req, res) => {
+  res.status(200).json({
+    service: "ci-cd-app",
+    status: "running",
+    port: PORT,
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
