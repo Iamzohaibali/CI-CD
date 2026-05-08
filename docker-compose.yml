@@ -1,0 +1,13 @@
+services:
+  app:
+    image: zohaib3464ali/myapp:latest
+
+    container_name: myapp
+
+    restart: always
+
+    ports:
+      - "3000:3000"
+
+    env_file:
+      - .env

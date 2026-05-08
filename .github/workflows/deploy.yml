@@ -1,4 +1,4 @@
-name: Deploy Node App
+name: Deploy Docker App
 
 on:
   push:
@@ -10,6 +10,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/myapp:latest .
+
+      - name: Push Docker Image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/myapp:latest
+
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.0.3
 
@@ -19,10 +36,10 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
 
           script: |
-            cd ~/CI-CD
+            cd /home/ubuntu/app
 
             git pull origin main
 
-            npm install
+            docker compose pull
 
-            pm2 restart all
+            docker compose up -d
